@@ -4,6 +4,8 @@ namespace Jakmall\Recruitment\Calculator\Commands;
 
 use Illuminate\Console\Command;
 use Jakmall\Recruitment\Calculator\Controllers\CalculatorController;
+use Jakmall\Recruitment\Calculator\Controllers\CalculatorHistoryController;
+use Jakmall\Recruitment\Calculator\History\Infrastructure\CommandHistoryManagerInterface;
 
 class PowCommand extends Command
 {
@@ -31,13 +33,17 @@ class PowCommand extends Command
         parent::__construct();
     }
 
-    public function handle(): void
+    public function handle(CommandHistoryManagerInterface $CommandInterface): void
     {
         $base = $this->argument('base');
         $exp = $this->argument('exp');
-        $description = CalculatorController::generateCalculationDescription(array($base,$exp),static::OPERATOR);
-        $result = pow($base,$exp);
-
-        $this->comment(sprintf('%s = %s', $description, $result));
+        $numbers = array($base,$exp);
+        $calculatorEntity = CalculatorController::getCalulatorResult(
+            $numbers,
+            static::COMMAND_VERB,
+            static::OPERATOR
+        );
+        CalculatorHistoryController::logCalculatorHistory($CommandInterface,$calculatorEntity);
+        $this->comment($calculatorEntity->getOutput());
     }
 }

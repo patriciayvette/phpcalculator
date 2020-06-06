@@ -2,12 +2,45 @@
 
 namespace Jakmall\Recruitment\Calculator\Controllers;
 
+use Jakmall\Recruitment\Calculator\Entities\CalculatorEntity;
+use Jakmall\Recruitment\Calculator\Entities\EntitiesBuilder\CalculatorEntityBuilder;
+
 class CalculatorController
 {
     static function generateCalculationDescription(array $numbers, string $operator): string
     {
         $glue = sprintf(' %s ',  $operator);
         return implode($glue, $numbers);
+    }
+
+    static function getCalulatorResult($numbers,$command,$operator): CalculatorEntity
+    {
+        $description = self::generateCalculationDescription($numbers,$operator);
+        $result = self::getCalculationResult($numbers,$operator);
+        $output = self::getConsoleOutput($description,$result);
+
+        $calculatorEntity = (new CalculatorEntityBuilder())
+        ->setCommand($command)
+        ->setDescription($description)
+        ->setResult($result)
+        ->setOutput($output)
+        ->Build();
+
+        return $calculatorEntity;
+    }
+
+    static function getConsoleOutput($description, $result) : string
+    {
+        return sprintf('%s = %s', $description, $result);
+    }
+
+    static function getCalculationResult($numbers,$operator)
+    {
+        if($operator != '^'){
+            return self::calculateAll($numbers,$operator);
+        }else{
+            return pow($numbers[0],$numbers[1]);
+        }
     }
 
     /**

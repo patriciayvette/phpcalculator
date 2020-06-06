@@ -4,7 +4,9 @@ namespace Jakmall\Recruitment\Calculator\Commands;
 
 use Illuminate\Console\Command;
 use Jakmall\Recruitment\Calculator\Controllers\CalculatorController;
+use Jakmall\Recruitment\Calculator\Controllers\CalculatorHistoryController;
 use Jakmall\Recruitment\Calculator\Entities\CommandEntity;
+use Jakmall\Recruitment\Calculator\History\Infrastructure\CommandHistoryManagerInterface;
 
 class SubstractCommand extends Command
 {
@@ -30,13 +32,16 @@ class SubstractCommand extends Command
         parent::__construct();
     }
 
-    public function handle(): void
+    public function handle(CommandHistoryManagerInterface $CommandInterface): void
     {
         $numbers = $this->getInput();
-        $description = CalculatorController::generateCalculationDescription($numbers,static::OPERATOR);
-        $result = CalculatorController::calculateAll($numbers,static::OPERATOR);
-
-        $this->comment(sprintf('%s = %s', $description, $result));
+        $calculatorEntity = CalculatorController::getCalulatorResult(
+            $numbers,
+            static::COMMAND_VERB,
+            static::OPERATOR
+        );
+        CalculatorHistoryController::logCalculatorHistory($CommandInterface,$calculatorEntity);
+        $this->comment($calculatorEntity->getOutput());
     }
 
     protected function getInput(): array
