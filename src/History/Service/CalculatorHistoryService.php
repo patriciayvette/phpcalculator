@@ -64,7 +64,9 @@ class CalculatorHistoryService implements CommandHistoryManagerInterface
     public function clearAll():bool
     {
         try{
-            unlink($this->filePath);
+            if(file_exists($this->filePath)){
+                unlink($this->filePath);
+            }
             $this->commandHistoryRepository->deleteDbHistory();
             return true;
         }catch(Exception $e){
@@ -74,19 +76,22 @@ class CalculatorHistoryService implements CommandHistoryManagerInterface
 
     public function fileHistoryToArray():array
     {
-        $file = @fopen($this->filePath, 'r');
-        $data = explode("\r\n", fread($file, filesize($this->filePath)));
         $rowData = [];
-        for ($i=0; $i<count($data)-1; $i++) {
-            $rowItem = explode("|", $data[$i]);
-            $rowData[] = [
-                'command' => $rowItem[0],
-                'description' => $rowItem[1],
-                'result' => $rowItem[2],
-                'output' => $rowItem[3],
-                'time' => $rowItem[4]
-            ];
+        if(file_exists($this->filePath)){
+            $file = @fopen($this->filePath, 'r');
+            $data = explode("\r\n", fread($file, filesize($this->filePath)));
+            for ($i=0; $i<count($data)-1; $i++) {
+                $rowItem = explode("|", $data[$i]);
+                $rowData[] = [
+                    'command' => $rowItem[0],
+                    'description' => $rowItem[1],
+                    'result' => $rowItem[2],
+                    'output' => $rowItem[3],
+                    'time' => $rowItem[4]
+                ];
+            }
         }
+        
         return $rowData;
     }
 
@@ -97,11 +102,9 @@ class CalculatorHistoryService implements CommandHistoryManagerInterface
 
     public function getFileHistoryWithFilter($commands):array
     {
-        $arr = $this->fileHistoryToArray();
-        $filteredArr = array_filter($arr, function ($var) use ($commands) {
-            return ($var['command'] == $commands[0]);
-        });
-        return $filteredArr;
+        $arr_collection = collect($this->fileHistoryToArray());
+        $filteredArr = $arr_collection->whereIn('command', $commands);
+        return $filteredArr->toArray();
     }
 
     public function writeHistoryFile($command)

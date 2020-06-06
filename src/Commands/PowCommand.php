@@ -40,7 +40,7 @@ class PowCommand extends Command
         $numbers = array($base,$exp);
         $calculatorEntity = CalculatorController::getCalulatorResult(
             $numbers,
-            static::COMMAND_VERB,
+            static::COMMAND_OPERATOR,
             static::OPERATOR
         );
         CalculatorHistoryController::logCalculatorHistory($CommandInterface,$calculatorEntity);
