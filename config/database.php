@@ -2,5 +2,5 @@
 
 return [
     'driver' => 'sqlite',
-    'database' => './storage/calculator.sqlite'
+    'database' => 'storage/calculators.sqlite'
 ];

@@ -7,14 +7,17 @@ use PDOException;
 
 class Connection 
 {
-    protected CONST SQLITE_PATH ='./storage/calculator.sqlite';
+    protected $databasePath;
     private $pdo;
 
     public function __construct()
     {
+        $rootPath = dirname(__DIR__, 1);
+        $config = include($rootPath.'/config/database.php');
+        $this->databasePath = $rootPath.'/'.$config['database'];
         if($this->pdo === null){
             try{
-                $this->pdo = new PDO("sqlite:".static::SQLITE_PATH);
+                $this->pdo = new PDO("sqlite:".$this->databasePath);
             }catch(PDOException $e){
                 die ($e->getMessage());
             }

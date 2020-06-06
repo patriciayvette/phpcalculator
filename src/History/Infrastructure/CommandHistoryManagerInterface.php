@@ -7,9 +7,11 @@ interface CommandHistoryManagerInterface
     /**
      * Returns array of command history.
      *
+     * @param driver $data Data source driver.
+     * 
      * @return array
      */
-    public function findAll(): array;
+    public function findAll($driver): array;
 
     /**
      * Log command data to storage.
@@ -31,8 +33,9 @@ interface CommandHistoryManagerInterface
      * Returns array of command history with filtered commands.
      *
      * @param array $command Array of command to filter.
+     * @param string $driver Data source driver.
      * 
      * @return array
      */
-    public function findHistoryWithFilter($command): array;
+    public function findHistoryWithFilter($command,$driver): array;
 }

@@ -37,8 +37,7 @@ class CommandHistoryRepository
     {
         $data = array();
         $query = 
-            'SELECT ROW_NUMBER() OVER( ORDER BY id ) RowNo,
-                    command,
+            'SELECT command,
                     description,
                     result,
                     output,
@@ -60,8 +59,7 @@ class CommandHistoryRepository
         $data = array();
         $command = implode("','", $commands);
         $query = 
-            "SELECT ROW_NUMBER() OVER( ORDER BY id ) RowNo,
-                    command,
+            "SELECT command,
                     description,
                     result,
                     output,

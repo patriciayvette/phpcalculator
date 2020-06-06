@@ -46,9 +46,10 @@ class ListHistoryCommand extends Command
     private function printHistory($data)
     {
         $tableData = [];
+        $RowNo=0;
         foreach ($data as $key => $row) {
             $tableData[] = [
-                'No' => $row['RowNo'],
+                'No' => ++$RowNo,
                 'Command' => ucfirst($row['command']),
                 'Description' => $row['description'],
                 'Result' => $row['result'],

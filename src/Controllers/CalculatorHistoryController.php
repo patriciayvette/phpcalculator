@@ -9,9 +9,9 @@ class CalculatorHistoryController
     public static function historyList(CommandHistoryManagerInterface $CommandInterface,$arrCommands,$driver)
     {
         if(empty($arrCommands)){
-            return $CommandInterface->findAll();
+            return $CommandInterface->findAll($driver);
         }else{
-            return $CommandInterface->findHistoryWithFilter($arrCommands);
+            return $CommandInterface->findHistoryWithFilter($arrCommands,$driver);
         }
     }
 
