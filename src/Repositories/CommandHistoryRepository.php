@@ -80,7 +80,7 @@ class CommandHistoryRepository
         return $data;
     }
 
-    public function insertDbHistory($command, $description, $result, $output) : bool
+    public function insertDbHistory($command, $description, $result, $output) : string
     {
         $query = 'INSERT INTO calculator_history
                             (command,
@@ -106,7 +106,7 @@ class CommandHistoryRepository
         }catch(Exception $e){
             die("Execute insert query error, cause: ". print_r($this->pdo->errorInfo(),true) );
         }
-        return $res;
+        return $this->pdo->lastInsertId();
     }
     
     public function deleteDbHistory() : bool
@@ -118,5 +118,41 @@ class CommandHistoryRepository
             die("Execute insert query error, cause: ". print_r($this->pdo->errorInfo(),true) );
         }
         return $res;
+    }
+
+    public function deleteDbHistoryById(string $historyId) : bool
+    {
+        $query = 'DELETE FROM calculator_history WHERE id=:historyId';
+        $queryParam = $this->pdo->prepare($query);
+        try{
+            $res = $queryParam->execute([':historyId' => $historyId]);
+        }catch(Exception $e){
+            die("Execute insert query error, cause: ". print_r($this->pdo->errorInfo(),true) );
+        }
+        return $res;
+    }
+
+    public function getDbHistoryById(string $historyId) : array
+    {
+        $data = array();
+        $query = 
+            "SELECT id,
+                    command,
+                    description,
+                    result,
+                    output,
+                    time
+             FROM   calculator_history
+             WHERE  id = :historyId";
+        $queryParam = $this->pdo->prepare($query);
+        try{
+            $queryParam->execute([':historyId' => $historyId]);
+            while ($rows = $queryParam->fetch()) {
+                $data[] = $rows;
+            }
+        }catch(Exception $e){
+            die("Execute select query error, cause: ". print_r($this->pdo->errorInfo(),true) );
+        }
+        return $data;
     }
 }

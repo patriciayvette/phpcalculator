@@ -11,11 +11,17 @@ use Jakmall\Recruitment\Calculator\History\Infrastructure\CommandHistoryManagerI
 class HistoryController extends Controller
 {
     protected const DATA_DRIVER = 'database';
+    private $commandInterface;
 
-    public function index(CommandHistoryManagerInterface $CommandInterface)
+    public function __construct(CommandHistoryManagerInterface $commandInterface)
+    {
+        $this->commandInterface = $commandInterface;
+    }
+
+    public function index()
     {
         $arrCommand = array();
-        $data = CalculatorHistoryController::historyList($CommandInterface,$arrCommand,static::DATA_DRIVER);
+        $data = CalculatorHistoryController::historyList($this->commandInterface,$arrCommand,static::DATA_DRIVER);
         if(empty($data)){
             $response = 'History is empty';
         }else{
@@ -34,14 +40,28 @@ class HistoryController extends Controller
         return new JsonResponse($response);
     }
 
-    public function show()
+    public function show($historyId)
     {
-        //dd('create show history by id here');
+        $data = CalculatorHistoryController::getHistoryById($this->commandInterface,$historyId);
+        if(empty($data)){
+            $response = 'History is empty';
+        }else{
+            preg_match_all('!\d+(?:\.\d+)?!', $data[0]['description'], $numbers);
+            $response = 
+                    new HistoryResponseEntity($data[0]['id'],
+                                              $data[0]['command'],
+                                              $data[0]['description'],
+                                              $numbers[0],
+                                              $data[0]['result'],
+                                              $data[0]['time']
+                    );
+        }
+        return new JsonResponse($response);
     }
 
-    public function remove()
+    public function remove($historyId)
     {
-        // todo: modify codes to remove history
-        //dd('create remove history logic here');
+        CalculatorHistoryController::clearHistoryById($this->commandInterface,$historyId);
+        return new JsonResponse(null,'204');
     }
 }

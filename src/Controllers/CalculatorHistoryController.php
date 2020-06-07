@@ -24,4 +24,14 @@ class CalculatorHistoryController
     {
         return $CommandInterface->log($CalculatorHistoryEntity);
     }
+
+    public static function getHistoryById($CommandInterface,$historyId)
+    {
+        return $CommandInterface->getHistoryById($historyId);
+    }
+
+    public static function clearHistoryById($CommandInterface,$historyId)
+    {
+        return $CommandInterface->clearHistoryById($historyId);
+    }
 }
