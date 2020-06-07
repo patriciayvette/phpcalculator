@@ -37,7 +37,8 @@ class CommandHistoryRepository
     {
         $data = array();
         $query = 
-            'SELECT command,
+            'SELECT id,
+                    command,
                     description,
                     result,
                     output,
@@ -59,7 +60,8 @@ class CommandHistoryRepository
         $data = array();
         $command = implode("','", $commands);
         $query = 
-            "SELECT command,
+            "SELECT id,
+                    command,
                     description,
                     result,
                     output,

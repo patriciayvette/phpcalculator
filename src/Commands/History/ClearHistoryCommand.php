@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Jakmall\Recruitment\Calculator\Controllers\CalculatorHistoryController;
 use Jakmall\Recruitment\Calculator\History\Infrastructure\CommandHistoryManagerInterface;
 
-class clearHistoryCommand extends Command
+class ClearHistoryCommand extends Command
 {
      /**
      * @var string

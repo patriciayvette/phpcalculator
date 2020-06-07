@@ -7,16 +7,23 @@ use Jakmall\Recruitment\Calculator\Entities\EntitiesBuilder\CalculatorEntityBuil
 
 class CalculatorController
 {
+    private static $operators = array (
+                                "add" => "+",
+                                "substract" => "-",
+                                "multiply" => "*",
+                                "divide" => "/",
+                                "pow" => "^"
+                            ); 
     static function generateCalculationDescription(array $numbers, string $operator): string
     {
         $glue = sprintf(' %s ',  $operator);
         return implode($glue, $numbers);
     }
 
-    static function getCalulatorResult($numbers,$command,$operator): CalculatorEntity
+    static function getCalulatorResult($numbers,$command): CalculatorEntity
     {
-        $description = self::generateCalculationDescription($numbers,$operator);
-        $result = self::getCalculationResult($numbers,$operator);
+        $description = self::generateCalculationDescription($numbers,self::$operators[$command]);
+        $result = self::getCalculationResult($numbers,self::$operators[$command]);
         $output = self::getConsoleOutput($description,$result);
 
         $calculatorEntity = (new CalculatorEntityBuilder())
@@ -36,7 +43,7 @@ class CalculatorController
 
     static function getCalculationResult($numbers,$operator)
     {
-        if($operator != '^'){
+        if($operator != self::$operators['pow']){
             return self::calculateAll($numbers,$operator);
         }else{
             return pow($numbers[0],$numbers[1]);
