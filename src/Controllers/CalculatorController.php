@@ -22,6 +22,9 @@ class CalculatorController
 
     static function getCalulatorResult($numbers,$command): CalculatorEntity
     {
+        if($command == 'pow' & count($numbers) > 2){
+            $numbers = array($numbers[0],$numbers[1]);
+        }
         $description = self::generateCalculationDescription($numbers,self::$operators[$command]);
         $result = self::getCalculationResult($numbers,self::$operators[$command]);
         $output = self::getConsoleOutput($description,$result);
